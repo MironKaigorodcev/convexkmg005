@@ -1,5 +1,4 @@
 from pytest import approx
-from math import sqrt
 from r2point import R2Point
 from convex import Polygon
 

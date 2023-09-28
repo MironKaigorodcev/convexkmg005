@@ -1,6 +1,5 @@
 from deq import Deq
 from r2point import R2Point
-from math import sqrt
 
 
 class Figure:
@@ -12,15 +11,15 @@ class Figure:
     def area(self):
         return 0.0
 
+    def count(self):
+        return 0
+
 
 class Void(Figure):
     """ "Hульугольник" """
 
     def add(self, p):
         return Point(p)
-
-    def count(self):
-        return 0
 
 
 class Point(Figure):
@@ -31,9 +30,6 @@ class Point(Figure):
 
     def add(self, q):
         return self if self.p == q else Segment(self.p, q)
-
-    def count(self):
-        return 0
 
 
 class Segment(Figure):
@@ -56,7 +52,7 @@ class Segment(Figure):
             return self
 
     def count(self):
-        return 0
+        return 1
 
 
 class Polygon(Figure):
@@ -73,12 +69,16 @@ class Polygon(Figure):
             self.points.push_first(c)
         self._perimeter = a.dist(b) + b.dist(c) + c.dist(a)
         self._area = abs(R2Point.area(a, b, c))
+        self._count = 3
 
     def perimeter(self):
         return self._perimeter
 
     def area(self):
         return self._area
+
+    def count(self):
+        return self._count
 
     # добавление новой точки
     def add(self, t):
@@ -119,49 +119,20 @@ class Polygon(Figure):
                 t.dist(self.points.last())
             self.points.push_first(t)
 
-            return self
+            self._count = 0
+            for i in range(self.points.size() - 1):
+                for k in range(i + 1, self.points.size()):
+                    if k + 1 > self.points.size() - 1:
+                        l = 0
+                    else:
+                        l = k + 1
+                    if R2Point.dist_bw_seg(self.points.array[i],
+                                           self.points.array[i + 1],
+                                           self.points.array[k],
+                                           self.points.array[l]) <= 1:
+                        self._count += 1
 
-    def count(self):
-        c = 0
-        for i in range(self.points.size() - 1):
-            for k in range(i + 1, self.points.size()):
-                if k + 1 > self.points.size() - 1:
-                    l = 0
-                else:
-                    l = k + 1
-                if self.dist_bw_seg(self.points.array[i],
-                                    self.points.array[i + 1],
-                                    self.points.array[k],
-                                    self.points.array[l]) <= 1:
-                    c += 1
-        return c
-
-    def dist_bw_seg(self, a, b, c, d):
-        distance1 = self.distance_point_to_segment(a.x, a.y, c, d)
-        distance2 = self.distance_point_to_segment(b.x, b.y, c, d)
-        distance3 = self.distance_point_to_segment(c.x, c.y, a, b)
-        distance4 = self.distance_point_to_segment(d.x, d.y, a, b)
-        return min(distance1, distance2, distance3, distance4)
-
-    def distance_point_to_segment(self, x, y, a, b):
-        vector1_x = x - a.x
-        vector1_y = y - a.y
-        vector2_x = b.x - a.x
-        vector2_y = b.y - a.y
-        projection = (vector1_x * vector2_x + vector1_y * vector2_y) / \
-                     (vector2_x ** 2 + vector2_y ** 2)
-        if projection <= 0:
-            # Точка ближе к началу отрезка
-            return sqrt((x - a.x) ** 2 + (y - a.y) ** 2)
-        elif projection >= 1:
-            # Точка ближе к концу отрезка
-            return sqrt((x - b.x) ** 2 + (y - b.y) ** 2)
-        else:
-            # Точка ближе к промежуточной точке на отрезке
-            projection_point = (a.x + projection * vector2_x,
-                                a.y + projection * vector2_y)
-            return sqrt((x - projection_point[0]) ** 2 +
-                        (y - projection_point[1]) ** 2)
+        return self
 
 
 if __name__ == "__main__":
