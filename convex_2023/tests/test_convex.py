@@ -30,6 +30,9 @@ class TestVoid:
     def test_add(self):
         assert isinstance(self.f.add(R2Point(0.0, 0.0)), Point)
 
+    def test_amount(self):
+        assert self.f.count() == 0
+
 
 class TestPoint:
 
@@ -53,7 +56,10 @@ class TestPoint:
     def test_аrea(self):
         assert self.f.area() == 0.0
 
+    def test_amount(self):
+        assert self.f.count() == 0
     # При добавлении точки одноугольник может не измениться
+
     def test_add1(self):
         assert self.f.add(R2Point(0.0, 0.0)) is self.f
 
@@ -83,6 +89,9 @@ class TestSegment:
     # Площадь двуугольника нулевая
     def test_аrea(self):
         assert self.f.area() == 0.0
+
+    def test_amount(self):
+        assert self.f.count() == 1
 
     # При добавлении точки двуугольник может не измениться
     def test_add1(self):
