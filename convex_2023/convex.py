@@ -123,13 +123,13 @@ class Polygon(Figure):
             for i in range(self.points.size() - 1):
                 for k in range(i + 1, self.points.size()):
                     if k + 1 > self.points.size() - 1:
-                        l = 0
+                        h = 0
                     else:
-                        l = k + 1
+                        h = k + 1
                     if R2Point.dist_bw_seg(self.points.array[i],
                                            self.points.array[i + 1],
                                            self.points.array[k],
-                                           self.points.array[l]) <= 1:
+                                           self.points.array[h]) <= 1:
                         self._count += 1
 
         return self
